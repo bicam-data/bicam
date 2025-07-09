@@ -7,7 +7,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 import boto3
 
@@ -102,7 +102,7 @@ def print_update():
         print(f'        "description": "Complete {dataset} data",')
         print(f'        "checksum": "{info["checksum"]}",')
         print(f'        "extracted_size_mb": {info["size_mb"] * 2:.0f},  # Estimate')
-        print(f'        "files": ["..."],  # Update with actual files')
+        print('        "files": ["..."],  # Update with actual files')
         print('        "format": "CSV and JSON files",')
         print('        "congress_range": "...",  # Update with actual range')
         print("    },")

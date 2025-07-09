@@ -122,13 +122,17 @@ class TestLoadDataframe:
         # Mock that dataset doesn't exist
         mock_exists.return_value = False
 
-        with pytest.raises(ValueError, match=r"Dataset 'bills' is not cached.*Set download=True"):
+        with pytest.raises(
+            ValueError, match=r"Dataset 'bills' is not cached.*Set download=True"
+        ):
             load_dataframe("bills", "bills_metadata.csv", download=False)
 
     @patch("pathlib.Path.exists")
     def test_load_dataframe_invalid_dataset(self, mock_exists):
         """Test loading dataframe with invalid dataset type."""
-        with pytest.raises(ValueError, match=r"Unknown dataset type: invalid_dataset.*Available types:"):
+        with pytest.raises(
+            ValueError, match=r"Unknown dataset type: invalid_dataset.*Available types:"
+        ):
             load_dataframe("invalid_dataset", "test.csv")
 
     @patch("pathlib.Path.exists")
@@ -201,7 +205,9 @@ class TestLoadDataframe:
         DATASET_TYPES["bills"]["files"] = ["data.json", "metadata.txt"]
 
         try:
-            with pytest.raises(ValueError, match=r"No CSV files available in dataset 'bills'"):
+            with pytest.raises(
+                ValueError, match=r"No CSV files available in dataset 'bills'"
+            ):
                 load_dataframe("bills")
 
         finally:
@@ -283,7 +289,9 @@ class TestLoadDataframe:
         # Mock that dataset exists
         mock_exists.return_value = True
 
-        with pytest.raises(ValueError, match=r"Invalid df_engine: invalid_engine.*Available engines:"):
+        with pytest.raises(
+            ValueError, match=r"Invalid df_engine: invalid_engine.*Available engines:"
+        ):
             load_dataframe("bills", "bills_metadata.csv", df_engine="invalid_engine")
 
     @patch("pandas.read_csv")
