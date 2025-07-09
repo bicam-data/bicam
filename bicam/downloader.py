@@ -13,7 +13,7 @@ from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 from tqdm import tqdm
 
-from ._auth import get_s3_client  # type: ignore
+from ._auth import get_s3_client
 from .config import (
     DEFAULT_CACHE_DIR,
     MAX_RETRIES,
@@ -219,15 +219,50 @@ class BICAMDownloader:
         """Verify that expected files exist after extraction."""
         expected_files = dataset_info.get("files", [])
 
+        # Special handling for complete dataset
+        if dataset_info.get("key", "").startswith("complete/"):
+            return self._verify_complete_dataset(extract_path)
+
+        # Regular validation for individual datasets
         for file_name in expected_files:
             if file_name == "All files from individual datasets":
-                continue  # Skip for 'complete' dataset
+                continue  # Skip placeholder for complete dataset
 
             file_path = extract_path / file_name
             if not file_path.exists():
                 logger.error(f"Missing expected file: {file_name}")
                 return False
 
+        return True
+
+    def _verify_complete_dataset(self, extract_path: Path) -> bool:
+        """Verify complete dataset contains files from all individual datasets."""
+        from .datasets import DATASET_TYPES
+
+        # Get all expected files from individual datasets
+        all_expected_files = []
+        for dataset_type, dataset_info in DATASET_TYPES.items():
+            if dataset_type != "complete":
+                all_expected_files.extend(dataset_info["files"])
+
+        # Check that all files exist
+        missing_files = []
+        for file_name in all_expected_files:
+            file_path = extract_path / file_name
+            if not file_path.exists():
+                missing_files.append(file_name)
+
+        if missing_files:
+            logger.error(
+                f"Complete dataset missing {len(missing_files)} files: {missing_files[:5]}..."
+            )
+            if len(missing_files) <= 10:
+                logger.error(f"Missing files: {missing_files}")
+            return False
+
+        logger.info(
+            f"Complete dataset validation passed: {len(all_expected_files)} files found"
+        )
         return True
 
     def get_info(self, dataset_type: str) -> Dict[str, Any]:

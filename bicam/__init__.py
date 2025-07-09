@@ -1,7 +1,7 @@
 """BICAM - Congressional and Legislative Data Downloader"""
 
-from typing import Any, Dict, List, Optional, Union
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 from .__version__ import __version__
 from .datasets import DATASET_TYPES
@@ -235,7 +235,7 @@ def _load_with_engine(file_path: Path, df_engine: str) -> Any:
 
     elif df_engine == "dask":
         try:
-            import dask.dataframe as dd  # type: ignore
+            import dask.dataframe as dd
 
             return dd.read_csv(file_path)
         except ImportError as e:
@@ -245,7 +245,7 @@ def _load_with_engine(file_path: Path, df_engine: str) -> Any:
 
     elif df_engine == "spark":
         try:
-            from pyspark.sql import SparkSession  # type: ignore
+            from pyspark.sql import SparkSession
 
             spark = SparkSession.builder.getOrCreate()
             return spark.read.csv(str(file_path), header=True, inferSchema=True)
@@ -256,7 +256,7 @@ def _load_with_engine(file_path: Path, df_engine: str) -> Any:
 
     elif df_engine == "duckdb":
         try:
-            import duckdb  # type: ignore
+            import duckdb
 
             return duckdb.read_csv(str(file_path))
         except ImportError as e:

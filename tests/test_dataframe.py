@@ -25,7 +25,7 @@ class TestLoadDataframe:
             mock_df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
             mock_read_csv.return_value = mock_df
 
-            result = load_dataframe("bills", "bills_metadata.csv", download=True)
+            result = load_dataframe("bills", "bills.csv", download=True)
 
             # Should call download_dataset with auto-confirm for large datasets
             mock_download_dataset.assert_called_once_with(
@@ -50,7 +50,7 @@ class TestLoadDataframe:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_read_csv.return_value = mock_df
 
-            result = load_dataframe("members", "members_current.csv", download=True)
+            result = load_dataframe("members", "members.csv", download=True)
 
             # Should call download_dataset without auto-confirm for small datasets
             mock_download_dataset.assert_called_once_with(
@@ -78,9 +78,7 @@ class TestLoadDataframe:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_read_csv.return_value = mock_df
 
-            result = load_dataframe(
-                "bills", "bills_metadata.csv", download=True, confirm=False
-            )
+            result = load_dataframe("bills", "bills.csv", download=True, confirm=False)
 
             # Should call download_dataset with confirm=False (user override)
             mock_download_dataset.assert_called_once_with(
@@ -104,9 +102,7 @@ class TestLoadDataframe:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_read_csv.return_value = mock_df
 
-            result = load_dataframe(
-                "bills", "bills_metadata.csv", download=True, confirm=True
-            )
+            result = load_dataframe("bills", "bills.csv", download=True, confirm=True)
 
             # Should call download_dataset with confirm=True (user override)
             mock_download_dataset.assert_called_once_with(
@@ -125,7 +121,7 @@ class TestLoadDataframe:
         with pytest.raises(
             ValueError, match=r"Dataset 'bills' is not cached.*Set download=True"
         ):
-            load_dataframe("bills", "bills_metadata.csv", download=False)
+            load_dataframe("bills", "bills.csv", download=False)
 
     @patch("pathlib.Path.exists")
     def test_load_dataframe_invalid_dataset(self, mock_exists):
@@ -156,7 +152,7 @@ class TestLoadDataframe:
         # Simulate: dataset dir exists, file does not exist
         mock_exists.side_effect = [True, False]
         with pytest.raises(FileNotFoundError) as exc_info:
-            load_dataframe("bills", "bills_metadata.csv")
+            load_dataframe("bills", "bills.csv")
         assert "File not found" in str(exc_info.value)
 
     @patch("pandas.read_csv")
@@ -168,7 +164,7 @@ class TestLoadDataframe:
         mock_read_csv.side_effect = Exception("CSV parsing error")
 
         with pytest.raises(ValueError, match=r"Error loading.*CSV parsing error"):
-            load_dataframe("bills", "bills_metadata.csv")
+            load_dataframe("bills", "bills.csv")
 
     @patch("pandas.read_csv")
     @patch("pathlib.Path.exists")
@@ -187,7 +183,7 @@ class TestLoadDataframe:
         # Use the actual path that would be constructed
         from bicam.config import DEFAULT_CACHE_DIR
 
-        expected_file = Path(DEFAULT_CACHE_DIR) / "bills" / "bills_metadata.csv"
+        expected_file = Path(DEFAULT_CACHE_DIR) / "bills" / "bills.csv"
         mock_read_csv.assert_called_once_with(expected_file)
 
         # Should return the dataframe
@@ -225,12 +221,10 @@ class TestLoadDataframe:
         mock_df = pd.DataFrame({"col1": [1, 2, 3]})
         mock_read_csv.return_value = mock_df
 
-        result = load_dataframe(
-            "bills", "bills_metadata.csv", cache_dir="/custom/cache"
-        )
+        result = load_dataframe("bills", "bills.csv", cache_dir="/custom/cache")
 
         # Should use custom cache directory
-        expected_file = Path("/custom/cache/bills/bills_metadata.csv")
+        expected_file = Path("/custom/cache/bills/bills.csv")
         mock_read_csv.assert_called_once_with(expected_file)
         assert isinstance(result, pd.DataFrame)
 
@@ -246,9 +240,7 @@ class TestLoadDataframe:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_read_csv.return_value = mock_df
 
-            result = load_dataframe(
-                "bills", "bills_metadata.csv", download=True, quiet=True
-            )
+            result = load_dataframe("bills", "bills.csv", download=True, quiet=True)
 
             # Should call download_dataset with quiet=True
             mock_download_dataset.assert_called_once_with(
@@ -275,7 +267,7 @@ class TestLoadDataframe:
         )
         mock_read_csv.return_value = mock_df
 
-        result = load_dataframe("bills", "bills_metadata.csv")
+        result = load_dataframe("bills", "bills.csv")
 
         # Should return the dataframe with correct data
         assert isinstance(result, pd.DataFrame)
@@ -292,7 +284,7 @@ class TestLoadDataframe:
         with pytest.raises(
             ValueError, match=r"Invalid df_engine: invalid_engine.*Available engines:"
         ):
-            load_dataframe("bills", "bills_metadata.csv", df_engine="invalid_engine")
+            load_dataframe("bills", "bills.csv", df_engine="invalid_engine")
 
     @patch("pandas.read_csv")
     @patch("pathlib.Path.exists")
@@ -310,7 +302,7 @@ class TestLoadDataframe:
         with patch("polars.read_csv") as mock_polars_read_csv:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_polars_read_csv.return_value = mock_df
-            result = load_dataframe("bills", "bills_metadata.csv", df_engine="polars")
+            result = load_dataframe("bills", "bills.csv", df_engine="polars")
             mock_polars_read_csv.assert_called_once()
             assert isinstance(result, pd.DataFrame)
 
@@ -332,7 +324,7 @@ class TestLoadDataframe:
         with patch("dask.dataframe.read_csv") as mock_dask_read_csv:
             mock_df = pd.DataFrame({"col1": [1, 2, 3]})
             mock_dask_read_csv.return_value = mock_df
-            result = load_dataframe("bills", "bills_metadata.csv", df_engine="dask")
+            result = load_dataframe("bills", "bills.csv", df_engine="dask")
             mock_dask_read_csv.assert_called_once()
             assert isinstance(result, pd.DataFrame)
 
@@ -347,7 +339,7 @@ class TestLoadDataframe:
             "builtins.__import__", side_effect=ImportError("No module named 'pyspark'")
         ):
             with pytest.raises(ImportError) as exc_info:
-                load_dataframe("bills", "bills_metadata.csv", df_engine="spark")
+                load_dataframe("bills", "bills.csv", df_engine="spark")
 
             assert "pyspark is not installed" in str(exc_info.value)
             assert "pip install pyspark" in str(exc_info.value)
@@ -363,7 +355,7 @@ class TestLoadDataframe:
             "builtins.__import__", side_effect=ImportError("No module named 'duckdb'")
         ):
             with pytest.raises(ImportError) as exc_info:
-                load_dataframe("bills", "bills_metadata.csv", df_engine="duckdb")
+                load_dataframe("bills", "bills.csv", df_engine="duckdb")
 
             assert "duckdb is not installed" in str(exc_info.value)
             assert "pip install duckdb" in str(exc_info.value)

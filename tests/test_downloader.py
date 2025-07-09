@@ -64,9 +64,7 @@ class TestBICAMDownloader:
             mock_downloader, "_download_from_s3"
         ) as mock_download, patch.object(
             mock_downloader, "_verify_zip", return_value=True
-        ), patch.object(
-            mock_downloader, "_extract_zip", return_value=dataset_dir
-        ):
+        ), patch.object(mock_downloader, "_extract_zip", return_value=dataset_dir):
             result = mock_downloader.download("bills", force_download=True)
 
         mock_download.assert_called_once()
@@ -353,6 +351,54 @@ class TestBICAMDownloader:
         ):
             result = mock_downloader.download("bills")
             assert result == temp_cache_dir / "bills"
+
+    def test_verify_complete_dataset_success(self, tmp_path):
+        """Test complete dataset validation with all expected files."""
+        downloader = BICAMDownloader(cache_dir=tmp_path)
+
+        # Create mock complete dataset with all expected files
+        from bicam.datasets import DATASET_TYPES
+
+        all_expected_files = []
+        for dataset_type, dataset_info in DATASET_TYPES.items():
+            if dataset_type != "complete":
+                all_expected_files.extend(dataset_info["files"])
+
+        # Create mock files
+        for file_name in all_expected_files:
+            (tmp_path / file_name).touch()
+
+        # Test validation
+        result = downloader._verify_complete_dataset(tmp_path)
+        assert result is True
+
+    def test_verify_complete_dataset_missing_files(self, tmp_path):
+        """Test complete dataset validation with missing files."""
+        downloader = BICAMDownloader(cache_dir=tmp_path)
+
+        # Create mock complete dataset with only some files
+        from bicam.datasets import DATASET_TYPES
+
+        all_expected_files = []
+        for dataset_type, dataset_info in DATASET_TYPES.items():
+            if dataset_type != "complete":
+                all_expected_files.extend(dataset_info["files"])
+
+        # Create only half the expected files
+        for file_name in all_expected_files[: len(all_expected_files) // 2]:
+            (tmp_path / file_name).touch()
+
+        # Test validation
+        result = downloader._verify_complete_dataset(tmp_path)
+        assert result is False
+
+    def test_verify_complete_dataset_empty(self, tmp_path):
+        """Test complete dataset validation with no files."""
+        downloader = BICAMDownloader(cache_dir=tmp_path)
+
+        # Test validation with empty directory
+        result = downloader._verify_complete_dataset(tmp_path)
+        assert result is False
 
 
 def test_windows_cache_dir(monkeypatch):
