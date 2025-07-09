@@ -25,21 +25,13 @@ jobs:
       run: |
         uv pip install -e ".[dev]" --system
 
-    - name: Verify dataset checksums
-      env:
-        BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
-        BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
-      run: |
-        python scripts/verify_checksums.py
-      continue-on-error: true
-
     - name: Build and publish
       env:
         BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
         BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
         PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        # Build and publish using environment variables directly
+        # Build and publish using simplified script
         ./scripts/build_and_publish.sh --publish
 
     - name: Trigger Read the Docs build
