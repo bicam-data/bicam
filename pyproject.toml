@@ -8,7 +8,7 @@ version = "0.1.1"
 description = "BICAM Dataset Downloader - Access comprehensive congressional data"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Ryan Delano", email = "bicam.data@gmail.com"},
 ]
@@ -19,7 +19,6 @@ keywords = ["congress", "legislation", "political-science", "dataset", "governme
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -72,11 +71,51 @@ packages = ["bicam"]
 [tool.setuptools.package-data]
 bicam = ["py.typed"]
 
-[tool.setuptools.exclude-package-data]
-"*" = ["tests", "tests.*"]
-
 [tool.setuptools.package-dir]
 "" = "."
+
+# Exclude development files from the distribution
+[tool.setuptools.dynamic]
+version = {attr = "bicam.__version__.__version__"}
+
+# Explicitly exclude development directories and files
+[tool.setuptools.exclude-package-data]
+"*" = [
+    "tests",
+    "tests.*",
+    "scripts",
+    "scripts.*",
+    "docs",
+    "docs.*",
+    ".github",
+    ".github.*",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    "__pycache__",
+    ".pytest_cache",
+    ".coverage",
+    "htmlcov",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".env",
+    ".env.*",
+    ".git",
+    ".gitignore",
+    "Makefile",
+    "requirements*.txt",
+    "uv.lock",
+    ".python-version",
+    "manifest.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "examples",
+    "examples.*"
+]
 
 [tool.ruff]
 line-length = 88
