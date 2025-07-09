@@ -64,9 +64,7 @@ class TestBICAMDownloader:
             mock_downloader, "_download_from_s3"
         ) as mock_download, patch.object(
             mock_downloader, "_verify_zip", return_value=True
-        ), patch.object(
-            mock_downloader, "_extract_zip", return_value=dataset_dir
-        ):
+        ), patch.object(mock_downloader, "_extract_zip", return_value=dataset_dir):
             result = mock_downloader.download("bills", force_download=True)
 
         mock_download.assert_called_once()
