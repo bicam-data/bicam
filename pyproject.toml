@@ -128,4 +128,5 @@ dev = [
     "sphinx>=7.1.2",
     "sphinx-autodoc-typehints>=2.0.1",
     "sphinx-rtd-theme>=3.0.2",
+    "types-requests>=2.31.0.6",
 ]
