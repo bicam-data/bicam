@@ -41,3 +41,8 @@ jobs:
       run: |
         # Build and publish using environment variables directly
         ./scripts/build_and_publish.sh --publish
+
+    - name: Trigger Read the Docs build
+      run: |
+        curl -X POST -H "Authorization: Token ${{ secrets.READTHEDOCS_TOKEN }}" \
+          https://readthedocs.org/api/v3/projects/bicam/builds/

@@ -69,7 +69,7 @@ By default, BICAM stores downloaded data in the following locations:
 +-------------+-----------------------------------+
 | Platform    | Default Cache Directory           |
 +-------------+-----------------------------------+
-| Windows     | %LOCALAPPDATA%\bicam              |
+| Windows     | %LOCALAPPDATA%\\bicam             |
 +-------------+-----------------------------------+
 | macOS/Linux | ~/.bicam                          |
 +-------------+-----------------------------------+
@@ -98,7 +98,7 @@ Troubleshooting
 If you encounter permission errors on Windows, try running as administrator or use a different cache directory.
 
 **Disk Space**
-Ensure you have sufficient disk space. The complete dataset requires ~12GB.
+Ensure you have sufficient disk space. The complete dataset requires ~12GB, and requires intermediate storage when downloading the data.
 
 **Network Issues**
 BICAM requires internet access to download datasets. Check your firewall settings if downloads fail.
