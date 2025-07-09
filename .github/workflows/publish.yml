@@ -43,6 +43,8 @@ jobs:
         ./scripts/build_and_publish.sh --publish
 
     - name: Trigger Read the Docs build
+      env:
+        READTHEDOCS_TOKEN: ${{ secrets.READTHEDOCS_TOKEN }}
       run: |
         curl -X POST -H "Authorization: Token ${{ secrets.READTHEDOCS_TOKEN }}" \
           https://readthedocs.org/api/v3/projects/bicam/builds/
