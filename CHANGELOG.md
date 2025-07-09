@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- N/A
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
+
+### Fixed
+
+- N/A
+
+### Security
+
+- N/A
+
+## [0.1.1] - 2025-07-09
+
+### Added
+
 - Initial implementation of BICAM package
 - Support for 12 different congressional datasets
 - Python API with simple download interface
@@ -17,9 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Progress tracking for downloads
 - Retry logic for network failures
 - Type hints throughout the codebase
-- Comprehensive test suite
+- Comprehensive test suite (119 tests, 88% coverage)
 - Development tools with uv integration
 - GitHub Actions for CI/CD
+- Complete documentation with Sphinx
+- Build and publish automation scripts
 
 ### Changed
 
