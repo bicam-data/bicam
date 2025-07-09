@@ -34,6 +34,13 @@ jobs:
       run: |
         uv pip install types-requests --system
 
+    - name: Generate credentials file
+      env:
+        BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
+        BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
+      run: |
+        python scripts/credentials/3_build_credentials.py
+
     - name: Verify dataset checksums
       env:
         BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
