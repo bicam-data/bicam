@@ -10,7 +10,7 @@ echo "=============================================="
 if ! command -v uv &> /dev/null; then
     echo "Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    
+
     # Add to PATH for current session
     export PATH="$HOME/.cargo/bin:$PATH"
 fi

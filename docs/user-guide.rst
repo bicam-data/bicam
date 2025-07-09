@@ -34,13 +34,13 @@ Download with options:
 
    # Force re-download
    bicam download bills --force
-   
+
    # Use custom cache directory
    bicam download bills --cache-dir /path/to/cache
-   
+
    # Skip confirmation for large (> 1GB) datasets
    bicam download complete --confirm
-   
+
    # Suppress output
    bicam download bills --quiet
 
@@ -80,7 +80,7 @@ BICAM also provides a Python API for programmatic access.
 .. code-block:: python
 
    import bicam
-   
+
    # Download a dataset
    bills_path = bicam.download_dataset('bills')
    print(f"Bills data available at: {bills_path}")
@@ -93,11 +93,11 @@ The easiest way to work with BICAM data is using the `load_dataframe` function:
 
    import bicam
    import pandas as pd
-   
+
    # Load bills data directly into a DataFrame (downloads if needed, auto-confirms for large datasets)
    bills_df = bicam.load_dataframe('bills', 'bills_metadata.csv', download=True)
    print(f"Loaded {len(bills_df)} bills")
-   
+
    # Load members data (will raise error if not cached)
    try:
        members_df = bicam.load_dataframe('members', 'members_current.csv')
@@ -105,26 +105,26 @@ The easiest way to work with BICAM data is using the `load_dataframe` function:
        print(f"Dataset not cached: {e}")
        # Download it first
        members_df = bicam.load_dataframe('members', 'members_current.csv', download=True)
-   
+
    # Load first available CSV file from a dataset
    df = bicam.load_dataframe('bills', download=True)
-   
+
    # Force confirmation prompt for large datasets
    bills_df = bicam.load_dataframe('bills', download=True, confirm=False)
-   
+
    # Suppress all output during download
    bills_df = bicam.load_dataframe('bills', download=True, quiet=True)
-   
+
    # Use different DataFrame engines
    # Polars (included by default)
    bills_df = bicam.load_dataframe('bills', df_engine='polars')
-   
+
    # Dask (requires dask installed)
    bills_df = bicam.load_dataframe('bills', df_engine='dask')
-   
+
    # Spark (requires pyspark installed)
    bills_df = bicam.load_dataframe('bills', df_engine='spark')
-   
+
    # DuckDB (requires duckdb installed)
    bills_df = bicam.load_dataframe('bills', df_engine='duckdb')
 
@@ -134,13 +134,13 @@ The easiest way to work with BICAM data is using the `load_dataframe` function:
 
    # Force re-download
    bills_path = bicam.download_dataset('bills', force_download=True)
-   
+
    # Custom cache directory
    bills_path = bicam.download_dataset('bills', cache_dir='/custom/path')
-   
+
    # Skip confirmation for large (> 1GB) datasets
    bills_path = bicam.download_dataset('complete', confirm=True)
-   
+
    # Suppress logging
    bills_path = bicam.download_dataset('bills', quiet=True)
 
@@ -151,7 +151,7 @@ The easiest way to work with BICAM data is using the `load_dataframe` function:
    # List all datasets
    datasets = bicam.list_datasets()
    print(f"Available datasets: {datasets}")
-   
+
    # Get info about a dataset
    info = bicam.get_dataset_info('bills')
    print(f"Size: {info['size_mb']} MB")
@@ -164,10 +164,10 @@ The easiest way to work with BICAM data is using the `load_dataframe` function:
    # Get cache size
    cache_info = bicam.get_cache_size()
    print(f"Total cache size: {cache_info['total']}")
-   
+
    # Clear specific dataset
    bicam.clear_cache('bills')
-   
+
    # Clear all cache
    bicam.clear_cache()
 
@@ -245,7 +245,7 @@ Best Practices
 **Dataset Selection**
 
 * Start with smaller datasets like ``congresses`` or ``members``
-* Use ``bills`` for legislative analysis  
+* Use ``bills`` for legislative analysis
 * Download ``complete`` only if you need all data
 
 **Performance Tips**

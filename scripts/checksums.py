@@ -9,20 +9,29 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict
 
-import boto3
-
 # Import project dataset definitions
 sys.path.insert(0, str(Path(__file__).parent.parent))
 try:
+    from bicam._auth import get_bucket_name, get_s3_client
     from bicam.datasets import DATASET_TYPES
 except ImportError:
     DATASET_TYPES = {}
+    get_s3_client = None
+    get_bucket_name = None
 
-BUCKET = "bicam-datasets"
+
+def get_bucket() -> str:
+    """Get the S3 bucket name for BICAM data."""
+    if get_bucket_name is not None:
+        return get_bucket_name()
+    return "bicam-datasets"  # fallback
 
 
 def calculate_s3_file_checksum(bucket: str, key: str, algorithm: str = "sha256") -> str:
-    s3 = boto3.client("s3")
+    if get_s3_client is None:
+        raise Exception("BICAM authentication not available")
+
+    s3 = get_s3_client()
     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         s3.download_file(bucket, key, tmp_file.name)
         hash_func = getattr(hashlib, algorithm)()
@@ -34,20 +43,25 @@ def calculate_s3_file_checksum(bucket: str, key: str, algorithm: str = "sha256")
 
 
 def get_s3_file_size(bucket: str, key: str) -> int:
-    s3 = boto3.client("s3")
+    if get_s3_client is None:
+        raise Exception("BICAM authentication not available")
+
+    s3 = get_s3_client()
     response = s3.head_object(Bucket=bucket, Key=key)
     return response["ContentLength"]
 
 
 def get_all_s3_checksums() -> Dict[str, Dict[str, Any]]:
     results = {}
+    bucket = get_bucket()
     for dataset, info in DATASET_TYPES.items():
         key = info["key"]
         try:
-            s3 = boto3.client("s3")
-            s3.head_object(Bucket=BUCKET, Key=key)
-            checksum = calculate_s3_file_checksum(BUCKET, key)
-            size_bytes = get_s3_file_size(BUCKET, key)
+            # Use BICAM authentication
+            s3 = get_s3_client()
+            s3.head_object(Bucket=bucket, Key=key)
+            checksum = calculate_s3_file_checksum(bucket, key)
+            size_bytes = get_s3_file_size(bucket, key)
             size_mb = size_bytes / (1024 * 1024)
             results[dataset] = {
                 "key": key,
@@ -56,7 +70,13 @@ def get_all_s3_checksums() -> Dict[str, Dict[str, Any]]:
                 "size_mb": size_mb,
             }
         except Exception as e:
-            results[dataset] = {"error": str(e)}
+            # Check if it's a credentials error and provide a more helpful message
+            error_msg = str(e)
+            if "Unable to locate credentials" in error_msg:
+                error_msg = "Unable to locate credentials - check BICAM_SECRET_KEY and BICAM_CREDENTIAL_ENDPOINT"
+            elif "BICAM authentication not available" in error_msg:
+                error_msg = "BICAM authentication not available - check imports"
+            results[dataset] = {"error": error_msg}
     return results
 
 

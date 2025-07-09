@@ -5,8 +5,8 @@ Run this script and open http://localhost:8000 in your browser.
 """
 
 import http.server
-import socketserver
 import os
+import socketserver
 import sys
 from pathlib import Path
 
@@ -35,11 +35,11 @@ def main():
             with socketserver.TCPServer(
                 ("", port), http.server.SimpleHTTPRequestHandler
             ) as httpd:
-                print(f"BICAM Documentation Server")
-                print(f"========================")
+                print("BICAM Documentation Server")
+                print("========================")
                 print(f"Server running at: http://localhost:{port}")
                 print(f"Serving from: {html_dir}")
-                print(f"Press Ctrl+C to stop the server")
+                print("Press Ctrl+C to stop the server")
                 print()
 
                 # Open browser automatically (optional)

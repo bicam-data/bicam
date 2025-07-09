@@ -113,4 +113,4 @@ docs:
 	@echo "Documentation built in docs/_build/html/"
 
 docs-clean:
-	rm -rf docs/_build/ 
+	rm -rf docs/_build/

@@ -106,4 +106,4 @@ else
     exit 1
 fi
 
-echo "Setup complete! 🎉" 
+echo "Setup complete! 🎉"

@@ -66,7 +66,7 @@ def _fetch_credentials() -> Dict[str, Any]:
             timeout=10,
             headers={'User-Agent': user_agent}
         )
-        
+
         if response.status_code != 200:
             error_msg = f"Credential server error: {response.status_code}"
             try:
@@ -75,11 +75,11 @@ def _fetch_credentials() -> Dict[str, Any]:
             except json.JSONDecodeError:
                 error_msg += f" - {response.text}"
             raise Exception(error_msg)
-        
+
         data: Dict[str, Any] = response.json()
         credentials: Dict[str, Any] = data['credentials']
         return credentials
-        
+
     except requests.exceptions.RequestException as e:
         raise Exception(f"Failed to connect to credential server: {str(e)}")
     except (KeyError, json.JSONDecodeError) as e:
@@ -90,14 +90,14 @@ def _fetch_credentials() -> Dict[str, Any]:
 def get_s3_client() -> boto3.client:
     """Get authenticated S3 client with temporary credentials."""
     global _credentials_cache
-    
+
     # Check if we have valid cached credentials
     if _is_credentials_valid():
         return _create_client_from_cache()
-    
+
     # Fetch new credentials
     _credentials_cache = _fetch_credentials()
-    
+
     return _create_client_from_cache()
 
 
@@ -107,4 +107,3 @@ def get_bucket_name() -> str:
     # For now, return a default or get from environment
     import os
     return os.environ.get('BICAM_BUCKET_NAME', 'bicam-data')
-

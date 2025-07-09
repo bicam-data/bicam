@@ -14,7 +14,7 @@ If you encounter permission errors when installing or running BICAM on Windows:
 
    # Run as administrator
    pip install bicam
-   
+
    # Or use a different cache directory
    set BICAM_DATA=C:\Users\YourName\bicam_cache
    bicam download bills
@@ -26,7 +26,7 @@ BICAM requires Python 3.8 or higher:
 .. code-block:: bash
 
    python --version
-   
+
    # If using an older version, upgrade Python or use a virtual environment
    python3.11 -m pip install bicam
    python3.11 -m bicam list
@@ -39,7 +39,7 @@ If you get import errors:
 
    # Reinstall with all dependencies
    pip install --upgrade bicam
-   
+
    # Or install dependencies manually
    pip install boto3 requests tqdm click
 
@@ -54,10 +54,10 @@ If downloads fail due to network issues:
 
    # Check your internet connection
    ping google.com
-   
+
    # Try with verbose output
    bicam download bills --force
-   
+
    # Check firewall settings
    # Ensure outbound HTTPS connections are allowed
 
@@ -70,10 +70,10 @@ If you get disk space errors:
    # Check available disk space
    df -h  # Linux/macOS
    dir     # Windows
-   
+
    # Clear existing cache
    bicam clear --all
-   
+
    # Use a different cache directory with more space
    bicam download bills --cache-dir /path/with/more/space
 
@@ -85,7 +85,7 @@ If downloads are interrupted:
 
    # Resume download (BICAM will automatically retry)
    bicam download bills
-   
+
    # Force re-download if corrupted
    bicam download bills --force
 
@@ -97,7 +97,7 @@ For datasets larger than 1GB, BICAM asks for confirmation:
 
    # Skip confirmation
    bicam download complete --confirm
-   
+
    # Or use quiet mode
    bicam download complete --quiet
 
@@ -112,10 +112,10 @@ If you encounter authentication errors:
 
    # Check if you have the latest version
    pip install --upgrade bicam
-   
+
    # Verify your internet connection
    curl https://api.github.com
-   
+
    # Check if the credential server is accessible
    # (This is handled automatically by BICAM)
 
@@ -128,7 +128,7 @@ If there are package token validation errors:
    # Reinstall the package
    pip uninstall bicam
    pip install bicam
-   
+
    # Check your package version
    bicam --version
 
@@ -143,10 +143,10 @@ If you suspect cache corruption:
 
    # Clear specific dataset
    bicam clear bills
-   
+
    # Clear all cache
    bicam clear --all
-   
+
    # Re-download
    bicam download bills
 
@@ -158,11 +158,11 @@ If you can't find your cached data:
 
    # Check cache location
    bicam cache
-   
+
    # Default locations:
    # Windows: %LOCALAPPDATA%\bicam
    # macOS/Linux: ~/.bicam
-   
+
    # Use custom location
    export BICAM_DATA=/custom/path
    bicam download bills
@@ -175,11 +175,11 @@ If cache is taking too much space:
 
    # Check cache size
    bicam cache
-   
+
    # Clear unused datasets
    bicam clear bills
    bicam clear amendments
-   
+
    # Clear all cache
    bicam clear --all
 
@@ -194,10 +194,10 @@ If downloads are slow:
 
    # Check your internet speed
    speedtest-cli
-   
+
    # Use quiet mode to reduce overhead
    bicam download bills --quiet
-   
+
    # Consider downloading during off-peak hours
 
 **Memory Issues**
@@ -233,7 +233,7 @@ Platform-Specific Issues
    # Path length issues
    # Use shorter cache paths
    set BICAM_DATA=C:\bicam
-   
+
    # Permission issues
    # Run as administrator or use user directory
    set BICAM_DATA=%USERPROFILE%\bicam_cache
@@ -255,7 +255,7 @@ Platform-Specific Issues
    # SELinux issues
    # Check SELinux status
    getenforce
-   
+
    # If enforcing, allow file access
    setsebool -P httpd_can_network_connect 1
 
@@ -270,10 +270,10 @@ If `bicam` command is not found:
 
    # Check if installed
    pip list | grep bicam
-   
+
    # Reinstall
    pip install --upgrade bicam
-   
+
    # Use Python module syntax
    python -m bicam list
 
@@ -285,10 +285,10 @@ If you get permission errors:
 
    # Check file permissions
    ls -la ~/.bicam
-   
+
    # Fix permissions
    chmod 755 ~/.bicam
-   
+
    # Use custom cache directory
    export BICAM_DATA=/tmp/bicam_cache
 
@@ -300,7 +300,7 @@ If you get "Unknown dataset" errors:
 
    # List available datasets
    bicam list
-   
+
    # Check spelling
    bicam download bills  # not bill
    bicam download members  # not member
@@ -317,7 +317,7 @@ If you can't import bicam:
    # Check installation
    import sys
    print(sys.path)
-   
+
    # Reinstall
    import subprocess
    subprocess.run(['pip', 'install', '--upgrade', 'bicam'])
@@ -329,10 +329,10 @@ If functions don't work as expected:
 .. code-block:: python
 
    import bicam
-   
+
    # Check available functions
    print(dir(bicam))
-   
+
    # Use try-except for error handling
    try:
        bills_path = bicam.download_dataset('bills')
@@ -347,7 +347,7 @@ If you get path-related errors:
 
    from pathlib import Path
    import bicam
-   
+
    # Use Path objects
    cache_dir = Path('/custom/cache')
    bills_path = bicam.download_dataset('bills', cache_dir=str(cache_dir))
@@ -362,7 +362,7 @@ Getting Help
    # View help
    bicam --help
    bicam download --help
-   
+
    # Check version
    bicam --version
 
@@ -420,4 +420,4 @@ Common Error Messages
 **"Invalid checksum"**
 * Clear cache and re-download
 * Check for disk corruption
-* Try with `--force` flag 
+* Try with `--force` flag

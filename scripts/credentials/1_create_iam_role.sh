@@ -56,4 +56,4 @@ aws iam put-role-policy \
     }' || echo "Policy may already exist"
 
 echo "✓ IAM role created successfully!"
-echo "Role ARN: arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/BICAMReadOnlyRole" 
+echo "Role ARN: arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/BICAMReadOnlyRole"

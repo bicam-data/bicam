@@ -82,7 +82,7 @@ if [ "$1" == "--publish" ]; then
         rm -f bicam/_auth.py
         exit 1
     fi
-    
+
     # Publish with uv
     uv publish
 
@@ -102,7 +102,7 @@ elif [ "$1" == "--test-publish" ]; then
 
     # Set the token for uv publish
     export PYPI_API_TOKEN="$PYPI_API_TOKEN_TEST"
-    
+
     # Publish to TestPyPI
     uv publish --publish-url https://test.pypi.org/legacy/
 
@@ -127,4 +127,3 @@ echo ""
 echo "Cleaning up credentials file..."
 rm -f bicam/_auth.py
 echo "✓ Done!"
-

@@ -65,7 +65,7 @@ The BICAM command-line interface provides easy access to all functionality.
 .. code-block:: bash
 
    bicam download <dataset> [OPTIONS]
-   
+
    Options:
      --force, -f              Force re-download
      --cache-dir PATH         Custom cache directory
@@ -78,7 +78,7 @@ The BICAM command-line interface provides easy access to all functionality.
 .. code-block:: bash
 
    bicam list-datasets [OPTIONS]
-   
+
    Options:
      --detailed, -d           Show detailed information
      --quiet, -q              Suppress log outputs
@@ -88,7 +88,7 @@ The BICAM command-line interface provides easy access to all functionality.
 .. code-block:: bash
 
    bicam info <dataset> [OPTIONS]
-   
+
    Options:
      --quiet, -q              Suppress log outputs
 
@@ -97,7 +97,7 @@ The BICAM command-line interface provides easy access to all functionality.
 .. code-block:: bash
 
    bicam cache [OPTIONS]
-   
+
    Options:
      --quiet, -q              Suppress log outputs
 
@@ -106,7 +106,7 @@ The BICAM command-line interface provides easy access to all functionality.
 .. code-block:: bash
 
    bicam clear [OPTIONS] [DATASET]
-   
+
    Options:
      --all                    Clear all cached data
      --yes                    Confirm cache clear without prompt
@@ -123,7 +123,7 @@ download_dataset
    Download and load a BICAM dataset.
 
    **Parameters:**
-   
+
    * **dataset_type** (str) -- Type of dataset to download. Options: 'bills', 'amendments', 'members', 'nominations', 'committees', 'committeereports', 'committeemeetings', 'committeeprints', 'hearings', 'treaties', 'congresses', 'complete'
    * **force_download** (bool, optional) -- Force re-download even if cached. Default: False
    * **cache_dir** (str or Path, optional) -- Custom cache directory. Default: ~/.bicam/
@@ -131,13 +131,13 @@ download_dataset
    * **quiet** (bool, optional) -- Suppress log outputs. Default: False
 
    **Returns:**
-   
+
    * **Path** -- Path to the extracted dataset directory
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
       bills_path = bicam.download_dataset('bills')
       print(f"Bills data available at: {bills_path}")
@@ -150,7 +150,7 @@ load_dataframe
    Load a BICAM dataset directly into a pandas DataFrame.
 
    **Parameters:**
-   
+
    * **dataset_type** (str) -- Type of dataset to load. Options: 'bills', 'amendments', 'members', 'nominations', 'committees', 'committeereports', 'committeemeetings', 'committeeprints', 'hearings', 'treaties', 'congresses', 'complete'
    * **file_name** (str, optional) -- Specific CSV file to load. If None, loads the first available CSV file. For example: 'bills_metadata.csv', 'members_current.csv'
    * **download** (bool, optional) -- If True, download the dataset if not cached. If False (default), raise an error if dataset is not cached. Default: False
@@ -160,49 +160,49 @@ load_dataframe
    * **df_engine** (str, optional) -- DataFrame engine to use. Options: 'pandas' (default), 'polars', 'dask', 'spark', 'duckdb'. Note: dask, spark, and duckdb require the respective packages to be installed. Default: "pandas"
 
    **Returns:**
-   
+
    * **DataFrame** -- Loaded dataset as a DataFrame in the specified engine format
 
    **Raises:**
-   
+
    * **ValueError** -- If dataset is not cached and download=False, or if file_name is invalid
    * **FileNotFoundError** -- If the specified file doesn't exist in the dataset
    * **ImportError** -- If the specified df_engine is not available
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
-      
+
       # Load bills metadata (will download if not cached, auto-confirm for large datasets)
       bills_df = bicam.load_dataframe('bills', 'bills_metadata.csv', download=True)
       print(f"Loaded {len(bills_df)} bills")
-      
+
       # Load members data (will raise error if not cached)
       try:
           members_df = bicam.load_dataframe('members', 'members_current.csv')
       except ValueError as e:
           print(f"Dataset not cached: {e}")
-      
+
       # Force confirmation prompt even for large datasets
       bills_df = bicam.load_dataframe('bills', download=True, confirm=False)
-      
+
       # Suppress all output during download
       bills_df = bicam.load_dataframe('bills', download=True, quiet=True)
-      
+
       # Use polars engine (included by default)
       bills_df = bicam.load_dataframe('bills', df_engine='polars')
-      
+
       # Use dask engine (requires dask installed)
       bills_df = bicam.load_dataframe('bills', df_engine='dask')
-      
+
       # Use spark engine (requires pyspark installed)
       bills_df = bicam.load_dataframe('bills', df_engine='spark')
-      
+
       # Use duckdb engine (requires duckdb installed)
       bills_df = bicam.load_dataframe('bills', df_engine='duckdb')
-      
+
       # Load first available CSV file
       df = bicam.load_dataframe('bills', download=True)
 
@@ -214,13 +214,13 @@ list_datasets
    List all available dataset types.
 
    **Returns:**
-   
+
    * **list** -- List of available dataset names
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
       datasets = bicam.list_datasets()
       print(f"Available datasets: {datasets}")
@@ -233,17 +233,17 @@ get_dataset_info
    Get information about a specific dataset.
 
    **Parameters:**
-   
+
    * **dataset_type** (str) -- Name of the dataset
 
    **Returns:**
-   
+
    * **dict** -- Dataset information including size, description, and file list
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
       info = bicam.get_dataset_info('bills')
       print(f"Size: {info['size_mb']} MB")
@@ -257,18 +257,18 @@ clear_cache
    Clear cached data.
 
    **Parameters:**
-   
+
    * **dataset_type** (str, optional) -- Specific dataset to clear. If None, clears all cached data.
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
-      
+
       # Clear specific dataset
       bicam.clear_cache('bills')
-      
+
       # Clear all cached data
       bicam.clear_cache()
 
@@ -280,13 +280,13 @@ get_cache_size
    Get cache size information.
 
    **Returns:**
-   
+
    * **dict** -- Cache size information including total size and per-dataset breakdown
 
    **Examples:**
-   
+
    .. code-block:: python
-   
+
       import bicam
       cache_info = bicam.get_cache_size()
       print(f"Total cache size: {cache_info['total']}")
@@ -299,7 +299,7 @@ The main downloader class for BICAM datasets.
 .. class:: bicam.downloader.BICAMDownloader(cache_dir=None)
 
    **Parameters:**
-   
+
    * **cache_dir** (Path, optional) -- Custom cache directory
 
    **Methods:**
@@ -309,7 +309,7 @@ The main downloader class for BICAM datasets.
       Download and extract a dataset.
 
       **Parameters:**
-      
+
       * **dataset_type** (str) -- Type of dataset to download
       * **force_download** (bool) -- Force re-download even if cached
       * **cache_dir** (str) -- Custom cache directory
@@ -317,7 +317,7 @@ The main downloader class for BICAM datasets.
       * **quiet** (bool) -- Suppress log outputs
 
       **Returns:**
-      
+
       * **Path** -- Path to the extracted dataset directory
 
    .. method:: get_info(dataset_type)
@@ -325,11 +325,11 @@ The main downloader class for BICAM datasets.
       Get information about a dataset.
 
       **Parameters:**
-      
+
       * **dataset_type** (str) -- Name of the dataset
 
       **Returns:**
-      
+
       * **dict** -- Dataset information
 
    .. method:: clear_cache(dataset_type=None)
@@ -337,7 +337,7 @@ The main downloader class for BICAM datasets.
       Clear cached data.
 
       **Parameters:**
-      
+
       * **dataset_type** (str, optional) -- Specific dataset to clear
 
    .. method:: get_cache_size()
@@ -345,7 +345,7 @@ The main downloader class for BICAM datasets.
       Get cache size information.
 
       **Returns:**
-      
+
       * **dict** -- Cache size information
 
 Configuration
@@ -371,11 +371,11 @@ Utility Functions
    Format bytes into human-readable string.
 
    **Parameters:**
-   
+
    * **bytes_value** (int) -- Number of bytes
 
    **Returns:**
-   
+
    * **str** -- Formatted string (e.g., "1.5 MB")
 
 .. function:: bicam.utils.estimate_download_time(size_mb, speed_mbps=10)
@@ -383,12 +383,12 @@ Utility Functions
    Estimate download time for a dataset.
 
    **Parameters:**
-   
+
    * **size_mb** (float) -- Size in megabytes
    * **speed_mbps** (float) -- Download speed in Mbps
 
    **Returns:**
-   
+
    * **str** -- Estimated time string
 
 .. function:: bicam.utils.check_disk_space(path, required_mb)
@@ -396,12 +396,12 @@ Utility Functions
    Check if sufficient disk space is available.
 
    **Parameters:**
-   
+
    * **path** (Path) -- Path to check
    * **required_mb** (float) -- Required space in MB
 
    **Returns:**
-   
+
    * **bool** -- True if sufficient space available
 
 .. function:: bicam.utils.verify_checksum(file_path, algorithm='sha256')
@@ -409,12 +409,12 @@ Utility Functions
    Verify file checksum.
 
    **Parameters:**
-   
+
    * **file_path** (Path) -- Path to file
    * **algorithm** (str) -- Hash algorithm
 
    **Returns:**
-   
+
    * **str** -- Checksum string
 
 Error Handling
@@ -439,7 +439,7 @@ BICAM functions may raise the following exceptions:
 .. code-block:: python
 
    import bicam
-   
+
    try:
        bills_path = bicam.download_dataset('bills')
    except ValueError as e:
@@ -464,4 +464,4 @@ BICAM recognizes the following environment variables:
 
    export BICAM_DATA=/custom/cache/path
    export BICAM_LOG_LEVEL=DEBUG
-   python -c "import bicam; bicam.download_dataset('bills')" 
+   python -c "import bicam; bicam.download_dataset('bills')"
