@@ -1,12 +1,13 @@
 """Authentication module for BICAM - uses credential server for S3 access."""
 
-import boto3
-import requests
 import hashlib
 import json
-from functools import lru_cache
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Any, Optional
+from functools import lru_cache
+from typing import Dict, Any
+
+import boto3
+import requests
 
 # Credential server endpoint - can be overridden via environment variable
 CREDENTIAL_ENDPOINT = "{{CREDENTIAL_ENDPOINT}}"
@@ -74,16 +75,16 @@ def _fetch_credentials() -> Dict[str, Any]:
                 error_msg += f" - {error_data.get('error', 'Unknown error')}"
             except json.JSONDecodeError:
                 error_msg += f" - {response.text}"
-            raise Exception(error_msg)
+            raise Exception(error_msg) from response
 
         data: Dict[str, Any] = response.json()
         credentials: Dict[str, Any] = data['credentials']
         return credentials
 
     except requests.exceptions.RequestException as e:
-        raise Exception(f"Failed to connect to credential server: {str(e)}")
+        raise Exception(f"Failed to connect to credential server: {str(e)}") from e
     except (KeyError, json.JSONDecodeError) as e:
-        raise Exception(f"Invalid response from credential server: {str(e)}")
+        raise Exception(f"Invalid response from credential server: {str(e)}") from e
 
 
 @lru_cache(maxsize=1)
