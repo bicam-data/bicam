@@ -31,7 +31,12 @@ jobs:
         BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
         PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        # Build and publish using simplified script
+        # Build and publish using environment variables directly
+        # Updated to remove checksum verification
+        echo "Starting build and publish process..."
+        echo "Current directory: $(pwd)"
+        echo "Available scripts:"
+        ls -la scripts/
         ./scripts/build_and_publish.sh --publish
 
     - name: Trigger Read the Docs build
