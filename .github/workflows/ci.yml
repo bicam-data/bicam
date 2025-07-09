@@ -30,6 +30,10 @@ jobs:
       run: |
         uv pip install -e ".[dev]" --system
 
+    - name: Install type stubs
+      run: |
+        uv pip install types-requests
+
     - name: Verify dataset checksums
       env:
         BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
@@ -78,6 +82,10 @@ jobs:
     - name: Install dependencies
       run: |
         uv pip install -e ".[dev]" --system
+
+    - name: Install type stubs
+      run: |
+        uv pip install types-requests
 
     - name: Build package
       run: |

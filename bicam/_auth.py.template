@@ -76,8 +76,9 @@ def _fetch_credentials() -> Dict[str, Any]:
                 error_msg += f" - {response.text}"
             raise Exception(error_msg)
         
-        data = response.json()
-        return data['credentials']
+        data: Dict[str, Any] = response.json()
+        credentials: Dict[str, Any] = data['credentials']
+        return credentials
         
     except requests.exceptions.RequestException as e:
         raise Exception(f"Failed to connect to credential server: {str(e)}")
@@ -86,7 +87,7 @@ def _fetch_credentials() -> Dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def get_s3_client():
+def get_s3_client() -> boto3.client:
     """Get authenticated S3 client with temporary credentials."""
     global _credentials_cache
     

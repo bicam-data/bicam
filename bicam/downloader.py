@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 from tqdm import tqdm
@@ -26,15 +27,15 @@ logger = logging.getLogger(__name__)
 
 
 class BICAMDownloader:
-    """Main downloader class for BICAM datasets."""
+    """Downloader for BICAM datasets."""
 
     def __init__(self, cache_dir: Optional[Path] = None):
         self.cache_dir = Path(cache_dir) if cache_dir else DEFAULT_CACHE_DIR
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.s3_client = None
-        self._download_history = {}
+        self._download_history: Dict[str, Any] = {}
 
-    def _get_s3_client(self):
+    def _get_s3_client(self) -> boto3.client:
         """Lazy load S3 client."""
         if self.s3_client is None:
             self.s3_client = get_s3_client()
@@ -44,7 +45,7 @@ class BICAMDownloader:
         self,
         dataset_type: str,
         force_download: bool = False,
-        cache_dir: Optional[str] = None,
+        cache_dir: Optional[Path] = None,
         confirm: bool = False,
         quiet: bool = False,
     ) -> Path:
@@ -64,13 +65,13 @@ class BICAMDownloader:
             os.environ["TQDM_DISABLE"] = "1"
 
         # Use custom cache dir if provided
-        cache_dir = Path(cache_dir) if cache_dir else self.cache_dir
-        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_dir_path = cache_dir if cache_dir else self.cache_dir
+        cache_dir_path.mkdir(parents=True, exist_ok=True)
 
         # Paths
         dataset_info = DATASET_TYPES[dataset_type]
-        zip_path = cache_dir / f"{dataset_type}.zip"
-        extract_path = cache_dir / dataset_type
+        zip_path = cache_dir_path / f"{dataset_type}.zip"
+        extract_path = cache_dir_path / dataset_type
 
         # Check if already extracted
         if extract_path.exists() and not force_download:
@@ -120,7 +121,7 @@ class BICAMDownloader:
                 zip_path.unlink()
             raise
 
-    def _download_from_s3(self, s3_key: str, local_path: Path, size_mb: float):
+    def _download_from_s3(self, s3_key: str, local_path: Path, size_mb: float) -> None:
         """Download file from S3 with progress bar and retry logic."""
         s3 = self._get_s3_client()
 
@@ -138,7 +139,7 @@ class BICAMDownloader:
                     desc=f"Downloading {local_path.name}",
                 ) as pbar:
 
-                    def callback(bytes_amount):
+                    def callback(bytes_amount: int) -> None:
                         pbar.update(bytes_amount)
 
                     s3.download_file(

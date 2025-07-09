@@ -15,11 +15,12 @@ except ImportError:
 
 
 # Cache configuration - Windows compatible
-def get_default_cache_dir():
+def get_default_cache_dir() -> Path:
     """Get the default cache directory, ensuring Windows compatibility."""
     # Use environment variable if set
-    if os.environ.get("BICAM_DATA"):
-        return Path(os.environ.get("BICAM_DATA"))
+    env_data = os.environ.get("BICAM_DATA")
+    if env_data:
+        return Path(env_data)
 
     # Get home directory in a cross-platform way
     home_dir = Path.home()

@@ -1,5 +1,6 @@
 """BICAM - Congressional and Legislative Data Downloader"""
 
+from typing import Any, Dict, List, Optional, Union
 from pathlib import Path
 
 from .__version__ import __version__
@@ -14,10 +15,10 @@ _downloader = BICAMDownloader()
 def download_dataset(
     dataset_type: str,
     force_download: bool = False,
-    cache_dir: str = None,
+    cache_dir: Optional[Union[str, Path]] = None,
     confirm: bool = False,
     quiet: bool = False,
-):
+) -> Path:
     """
     Download and load a BICAM dataset.
 
@@ -47,18 +48,21 @@ def download_dataset(
     >>> bills_path = bicam.download_dataset('bills')
     >>> print(f"Bills data available at: {bills_path}")
     """
-    return _downloader.download(dataset_type, force_download, cache_dir, confirm, quiet)
+    cache_dir_path = Path(cache_dir) if cache_dir else None
+    return _downloader.download(
+        dataset_type, force_download, cache_dir_path, confirm, quiet
+    )
 
 
 def load_dataframe(
     dataset_type: str,
-    file_name: str = None,
+    file_name: Optional[str] = None,
     download: bool = False,
-    cache_dir: str = None,
-    confirm: bool = None,
+    cache_dir: Optional[Union[str, Path]] = None,
+    confirm: Optional[bool] = None,
     quiet: bool = False,
     df_engine: str = "pandas",
-):
+) -> Any:
     """
     Load a BICAM dataset directly into a pandas DataFrame.
 
@@ -142,8 +146,8 @@ def load_dataframe(
         )
 
     dataset_info = DATASET_TYPES[dataset_type]
-    cache_dir = Path(cache_dir) if cache_dir else _downloader.cache_dir
-    dataset_path = cache_dir / dataset_type
+    cache_dir_path = Path(cache_dir) if cache_dir else _downloader.cache_dir
+    dataset_path = cache_dir_path / dataset_type
 
     # Check if dataset is cached
     if not dataset_path.exists():
@@ -202,7 +206,7 @@ def load_dataframe(
         raise ValueError(f"Error loading {file_path} with {df_engine}: {e}") from e
 
 
-def _load_with_engine(file_path, df_engine: str):
+def _load_with_engine(file_path: Path, df_engine: str) -> Any:
     """
     Load a CSV file using the specified DataFrame engine.
 
@@ -264,22 +268,22 @@ def _load_with_engine(file_path, df_engine: str):
         raise ValueError(f"Unsupported df_engine: {df_engine}")
 
 
-def list_datasets():
+def list_datasets() -> List[str]:
     """List all available dataset types."""
     return list(DATASET_TYPES.keys())
 
 
-def get_dataset_info(dataset_type: str):
+def get_dataset_info(dataset_type: str) -> Dict[str, Any]:
     """Get information about a specific dataset."""
     return _downloader.get_info(dataset_type)
 
 
-def clear_cache(dataset_type: str = None):
+def clear_cache(dataset_type: Optional[str] = None) -> None:
     """Clear cached data."""
     return _downloader.clear_cache(dataset_type)
 
 
-def get_cache_size():
+def get_cache_size() -> Dict[str, Any]:
     """Get cache size information."""
     return _downloader.get_cache_size()
 

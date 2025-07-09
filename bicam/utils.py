@@ -5,9 +5,10 @@ import os
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any, Callable, Tuple
 
 
-def format_bytes(size: int) -> str:
+def format_bytes(size: float) -> str:
     """Format bytes to human readable string."""
     for unit in ["B", "KB", "MB", "GB", "TB"]:
         if size < 1024.0:
@@ -42,7 +43,7 @@ def get_directory_size(directory: Path) -> int:
 
 def estimate_download_time(size_mb: float, speed_mbps: float = 10) -> str:
     """Estimate download time and return human-readable string."""
-    seconds = (size_mb * 8) / speed_mbps
+    seconds: float = (size_mb * 8) / speed_mbps
 
     if seconds < 60:
         return f"{int(seconds)} seconds"
@@ -54,7 +55,7 @@ def estimate_download_time(size_mb: float, speed_mbps: float = 10) -> str:
         return f"{hours} hours {minutes} minutes"
 
 
-def parse_s3_url(url: str) -> tuple[str, str]:
+def parse_s3_url(url: str) -> Tuple[str, str]:
     """Parse S3 URL into bucket and key."""
     if url.startswith("s3://"):
         url = url[5:]
@@ -73,7 +74,9 @@ def safe_filename(filename: str) -> str:
     return filename
 
 
-def retry_with_backoff(func, max_retries: int = 3, initial_delay: float = 1.0):
+def retry_with_backoff(
+    func: Callable[[], Any], max_retries: int = 3, initial_delay: float = 1.0
+) -> Any:
     """Retry a function with exponential backoff."""
     for attempt in range(max_retries):
         try:

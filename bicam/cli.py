@@ -3,7 +3,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import click
 
@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-def check_for_updates():
+def check_for_updates() -> None:
     """Check if a newer version is available."""
     if not CHECK_VERSION:
         return
@@ -46,7 +46,7 @@ def check_for_updates():
 
 @click.group()
 @click.version_option(version=__version__)
-def main():
+def main() -> None:
     """BICAM - Comprehensive Congressional Data Downloader"""
     check_for_updates()
 
@@ -67,7 +67,7 @@ def download(
     no_extract: bool,
     confirm: bool,
     quiet: bool,
-):
+) -> None:
     """Download a BICAM dataset."""
     try:
         # Set up quiet mode
@@ -144,7 +144,7 @@ def download(
 @main.command()
 @click.option("--detailed", "-d", is_flag=True, help="Show detailed information")
 @click.option("--quiet", "-q", is_flag=True, help="Suppress log outputs")
-def list_datasets_cmd(detailed: bool, quiet: bool):
+def list_datasets_cmd(detailed: bool, quiet: bool) -> None:
     """List available datasets."""
     # Set up quiet mode
     if quiet:
@@ -198,7 +198,13 @@ def list_datasets_cmd(detailed: bool, quiet: bool):
 @click.option("--all", is_flag=True, help="Clear all cached data.")
 @click.option("--yes", is_flag=True, help="Confirm cache clear without prompt.")
 @click.option("--quiet", "-q", is_flag=True, help="Suppress log outputs")
-def clear(dataset_type=None, all=False, yes=False, quiet=False, **kwargs):  # noqa: A002
+def clear(
+    dataset_type: Optional[str] = None,
+    all: bool = False,  # noqa: A002
+    yes: bool = False,
+    quiet: bool = False,
+    **kwargs: Any,
+) -> None:  # noqa: A002
     """Clear cached data for a dataset or all datasets."""
     # Set up quiet mode
     if quiet:
@@ -238,7 +244,7 @@ def clear(dataset_type=None, all=False, yes=False, quiet=False, **kwargs):  # no
 @main.command()
 @click.argument("dataset_type")
 @click.option("--quiet", "-q", is_flag=True, help="Suppress log outputs")
-def info(dataset_type: str, quiet: bool):
+def info(dataset_type: str, quiet: bool) -> None:
     """Show detailed information about a dataset."""
     # Set up quiet mode
     if quiet:
@@ -293,7 +299,7 @@ def info(dataset_type: str, quiet: bool):
 
 @main.command()
 @click.option("--quiet", "-q", is_flag=True, help="Suppress log outputs")
-def cache(quiet: bool):
+def cache(quiet: bool) -> None:
     """Show cache information and statistics."""
     # Set up quiet mode
     if quiet:
