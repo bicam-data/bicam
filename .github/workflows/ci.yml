@@ -40,6 +40,7 @@ jobs:
         BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
       run: |
         python scripts/credentials/3_build_credentials.py
+        uv run ruff format bicam/_auth.py
 
     - name: Verify dataset checksums
       env:
