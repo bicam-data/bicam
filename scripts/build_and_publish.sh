@@ -10,7 +10,7 @@ echo "=============================="
 if [ ! -f ".env" ]; then
     echo "Error: .env file not found in project root"
     echo "Create .env file with PyPI tokens:"
-    echo "  UV_PUBLISH_TOKEN=your-pypi-token-here"
+    echo "  PYPI_API_TOKEN=your-pypi-token-here"
     exit 1
 fi
 
@@ -76,8 +76,8 @@ if [ "$1" == "--publish" ]; then
     echo "Publishing to PyPI..."
 
     # Check for PyPI token
-    if [ -z "$UV_PUBLISH_TOKEN" ]; then
-        echo "Error: Set UV_PUBLISH_TOKEN environment variable"
+    if [ -z "$PYPI_API_TOKEN" ]; then
+        echo "Error: Set PYPI_API_TOKEN environment variable"
         echo "Get your token from: https://pypi.org/manage/account/token/"
         rm -f bicam/_auth.py
         exit 1
@@ -93,15 +93,15 @@ elif [ "$1" == "--test-publish" ]; then
     echo "Publishing to TestPyPI..."
 
     # Check for TestPyPI token
-    if [ -z "$UV_PUBLISH_TOKEN_TEST" ]; then
-        echo "Error: Set UV_PUBLISH_TOKEN_TEST environment variable"
+    if [ -z "$PYPI_API_TOKEN_TEST" ]; then
+        echo "Error: Set PYPI_API_TOKEN_TEST environment variable"
         echo "Get your token from: https://test.pypi.org/manage/account/token/"
         rm -f bicam/_auth.py
         exit 1
     fi
 
     # Set the token for uv publish
-    export UV_PUBLISH_TOKEN="$UV_PUBLISH_TOKEN_TEST"
+    export PYPI_API_TOKEN="$PYPI_API_TOKEN_TEST"
     
     # Publish to TestPyPI
     uv publish --publish-url https://test.pypi.org/legacy/
@@ -118,8 +118,8 @@ else
     echo "  - To TestPyPI: ./scripts/build_and_publish.sh --test-publish"
     echo ""
     echo "Make sure to set the appropriate token in your .env file:"
-    echo "  UV_PUBLISH_TOKEN=pypi-... (for PyPI)"
-    echo "  UV_PUBLISH_TOKEN_TEST=pypi-... (for TestPyPI)"
+    echo "  PYPI_API_TOKEN=pypi-... (for PyPI)"
+    echo "  PYPI_API_TOKEN_TEST=pypi-... (for TestPyPI)"
 fi
 
 # Clean up credentials file for security

@@ -7,15 +7,15 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.11"
-    
+
     - name: Install uv
       uses: astral-sh/setup-uv@v3
       with:
@@ -23,7 +23,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        uv pip install -e ".[dev]"
+        uv pip install -e ".[dev]" --system
 
     - name: Verify dataset checksums
       env:
@@ -37,12 +37,12 @@ jobs:
       env:
         BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
         BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
-        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         # Create .env file for build script
         echo "BICAM_SECRET_KEY=${{ secrets.BICAM_SECRET_KEY }}" > .env
         echo "BICAM_CREDENTIAL_ENDPOINT=${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}" >> .env
-        echo "UV_PUBLISH_TOKEN=${{ secrets.PYPI_API_TOKEN }}" >> .env
-        
+        echo "PYPI_API_TOKEN=${{ secrets.PYPI_API_TOKEN }}" >> .env
+
         # Build and publish
         ./scripts/build_and_publish.sh --publish
