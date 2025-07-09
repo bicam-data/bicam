@@ -62,7 +62,8 @@ rm -rf test-wheel-env
 if [ "$1" == "--publish" ]; then
     echo ""
     echo "Publishing to PyPI..."
-    uv publish
+    echo "Using PyPI token: ${PYPI_API_TOKEN:0:10}..."
+    uv publish --token "$PYPI_API_TOKEN"
     echo "✓ Package published successfully!"
 else
     echo ""
