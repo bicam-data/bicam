@@ -81,6 +81,8 @@ bicam = ["py.typed"]
 [tool.ruff]
 line-length = 88
 target-version = "py38"
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "PT", "SIM", "PD"]
 ignore = ["E501", "B008"]
 
