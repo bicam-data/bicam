@@ -32,7 +32,7 @@ jobs:
 
     - name: Install type stubs
       run: |
-        uv pip install types-requests
+        uv pip install types-requests --system
 
     - name: Verify dataset checksums
       env:
@@ -85,7 +85,7 @@ jobs:
 
     - name: Install type stubs
       run: |
-        uv pip install types-requests
+        uv pip install types-requests --system
 
     - name: Build package
       run: |
