@@ -109,4 +109,4 @@ def get_bucket_name() -> str:
     # For now, return a default or get from environment
     import os
 
-    return os.environ.get("BICAM_BUCKET_NAME", "bicam-data")
+    return os.environ.get("BICAM_BUCKET_NAME", "bicam-datasets")
