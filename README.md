@@ -47,9 +47,26 @@ import bicam
 bills_path = bicam.download_dataset('bills')
 print(f"Bills data available at: {bills_path}")
 
-# Load data directly into a DataFrame (downloads if needed)
-bills_df = bicam.load_dataframe('bills', 'bills_metadata.csv', download=True)
+# Load data directly into a DataFrame (downloads if needed, auto-confirms for large datasets)
+bills_df = bicam.load_dataframe('bills', 'bills.csv', download=True)
 print(f"Loaded {len(bills_df)} bills")
+
+# Load members data (will raise error if not cached)
+try:
+    members_df = bicam.load_dataframe('members', 'members.csv')
+except ValueError as e:
+    print(f"Dataset not cached: {e}")
+    # Download it first
+    members_df = bicam.load_dataframe('members', 'members.csv', download=True)
+
+# Load first available CSV file from a dataset
+df = bicam.load_dataframe('bills', download=True)
+
+# Use different DataFrame engines
+bills_df = bicam.load_dataframe('bills', 'bills.csv', df_engine='polars')  # Faster for large datasets
+bills_df = bicam.load_dataframe('bills', 'bills.csv', df_engine='dask')    # Out-of-memory processing
+bills_df = bicam.load_dataframe('bills', 'bills.csv', df_engine='spark')   # Distributed processing
+bills_df = bicam.load_dataframe('bills', 'bills.csv', df_engine='duckdb')  # SQL-like queries
 
 # List available datasets
 datasets = bicam.list_datasets()
@@ -58,7 +75,12 @@ print(f"Available datasets: {datasets}")
 # Get dataset information
 info = bicam.get_dataset_info('bills')
 print(f"Size: {info['size_mb']} MB")
-```
+
+# Advanced options
+bills_path = bicam.download_dataset('bills', force_download=True)  # Force re-download
+bills_path = bicam.download_dataset('bills', cache_dir='/custom/path')  # Custom cache directory
+bills_path = bicam.download_dataset('complete', confirm=True)  # Skip confirmation for large datasets
+bills_path = bicam.download_dataset('bills', quiet=True)  # Suppress logging
 
 ### Command Line Interface
 
@@ -66,11 +88,20 @@ print(f"Size: {info['size_mb']} MB")
 # List all available datasets
 bicam list-datasets
 
+# List with detailed information
+bicam list-datasets --detailed
+
 # Download a specific dataset
 bicam download bills
 
-# Get detailed information about a dataset, such as size and file names
-bicam info hearings
+# Download with options
+bicam download bills --force          # Force re-download
+bicam download bills --cache-dir /path/to/cache  # Custom cache directory
+bicam download complete --confirm     # Skip confirmation for large datasets
+bicam download bills --quiet          # Suppress output
+
+# Get detailed information about a dataset
+bicam info bills
 
 # Show cache usage
 bicam cache
@@ -84,18 +115,51 @@ bicam clear --all       # Clear all cached data
 
 | Dataset | Size | Description |
 |---------|------|-------------|
-| **bills** | ~2.5GB | Complete bills data including text, summaries, and related records  |
-| **amendments** | ~800MB | All amendments with amended items |
-| **members** | ~150MB | Historical and current member information |
-| **nominations** | ~400MB | Presidential nominations data |
-| **committees** | ~200MB | Committee information, including history of committee names |
-| **committeereports** | ~1.2GB | Committee reports, with full text and related information |
-| **committeemeetings** | ~600MB | Committee meeting records |
-| **committeeprints** | ~900MB | Committee prints, including full text and topics |
-| **hearings** | ~3.5GB | Hearing information, such as address and transcripts |
-| **treaties** | ~300MB | Treaty documents with actions, titles, and more |
-| **congresses** | ~100MB | Congressional session metadata, like directories and session dates |
+| **bills** | ~1.8GB | Complete bills data including text, summaries, and related records |
+| **amendments** | ~6.6GB | All amendments with amended items |
+| **members** | ~1MB | Historical and current member information |
+| **nominations** | ~21MB | Presidential nominations data |
+| **committees** | ~17MB | Committee information, including history of committee names |
+| **committeereports** | ~570MB | Committee reports, with full text and related information |
+| **committeemeetings** | ~5MB | Committee meeting records |
+| **committeeprints** | ~91MB | Committee prints, including full text and topics |
+| **hearings** | ~1.7GB | Hearing information, such as address and transcripts |
+| **treaties** | ~0MB | Treaty documents with actions, titles, and more |
+| **congresses** | ~1MB | Congressional session metadata, like directories and session dates |
 | **complete** | ~12GB | Complete BICAM dataset with all data types |
+
+## Working with Data
+
+### Basic Analysis
+
+```python
+import bicam
+import pandas as pd
+
+# Load bills data directly into DataFrame
+bills_df = bicam.load_dataframe('bills', 'bills.csv', download=True)
+
+# Basic analysis
+print(f"Total bills: {len(bills_df)}")
+print(f"Congress range: {bills_df['congress'].min()} - {bills_df['congress'].max()}")
+
+# Filter recent bills
+recent_bills = bills_df[bills_df['congress'] >= 115]
+print(f"Recent bills: {len(recent_bills)}")
+```
+
+### Working with Multiple Datasets
+
+```python
+import bicam
+
+# Load multiple datasets as DataFrames
+bills_sponsors_df = bicam.load_dataframe('bills', 'bills_sponsors.csv', download=True)
+members_df = bicam.load_dataframe('members', 'members.csv', download=True)
+
+# Join data (example)
+# bills_with_sponsors_detailed = bills_sponsors_df.merge(members_df, left_on='bioguide_id')
+```
 
 ## Configuration
 
@@ -126,6 +190,36 @@ bicam.clear_cache('bills')
 
 # Clear all cached data
 bicam.clear_cache()
+```
+
+## Best Practices
+
+### Dataset Selection
+- Start with smaller datasets like `congresses` or `members`
+- Use `bills` for legislative analysis
+- Download `complete` only if you need all data
+
+### Performance Tips
+- Use `--quiet` for automated scripts
+- Use `--confirm` to skip prompts in batch operations
+- Monitor disk space before downloading large datasets
+- Use `df_engine='polars'` for faster loading of large datasets
+- Use `df_engine='dask'` for out-of-memory processing
+
+### Data Management
+- Use `bicam cache` to monitor storage usage
+- Clear unused datasets with `bicam clear`
+- Consider using custom cache directories for different projects
+
+### Error Handling
+```python
+import bicam
+
+try:
+    bills_df = bicam.load_dataframe('bills', download=True)
+except Exception as e:
+    print(f"Download failed: {e}")
+    # Handle error appropriately
 ```
 
 ## Contributing

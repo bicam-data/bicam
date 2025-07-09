@@ -44,5 +44,14 @@ jobs:
       env:
         READTHEDOCS_TOKEN: ${{ secrets.READTHEDOCS_TOKEN }}
       run: |
-        curl -X POST -H "Authorization: Token ${{ secrets.READTHEDOCS_TOKEN }}" \
-          https://readthedocs.org/api/v3/projects/bicam/builds/
+        # Try API method first
+        curl -X POST \
+          -H "Authorization: Token ${{ secrets.READTHEDOCS_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          https://readthedocs.org/api/v3/projects/bicam/versions/latest/builds/ || \
+        # Fallback to webhook method
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"repository": {"full_name": "bicam-data/bicam"}}' \
+          https://readthedocs.org/webhook/github/
