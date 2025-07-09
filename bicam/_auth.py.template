@@ -20,6 +20,7 @@ _credentials_cache: Dict[str, Any] = {}
 def get_package_token() -> str:
     """Generate package token for authentication."""
     from .__version__ import __version__
+
     return hashlib.sha256(f"{__version__}-{SECRET_KEY}".encode()).hexdigest()
 
 
@@ -41,11 +42,11 @@ def _is_credentials_valid() -> bool:
 def _create_client_from_cache() -> boto3.client:
     """Create S3 client from cached credentials."""
     return boto3.client(
-        's3',
-        aws_access_key_id=_credentials_cache['access_key'],
-        aws_secret_access_key=_credentials_cache['secret_key'],
-        aws_session_token=_credentials_cache['session_token'],
-        region_name=_credentials_cache.get('region', 'us-east-1')
+        "s3",
+        aws_access_key_id=_credentials_cache["access_key"],
+        aws_secret_access_key=_credentials_cache["secret_key"],
+        aws_session_token=_credentials_cache["session_token"],
+        region_name=_credentials_cache.get("region", "us-east-1"),
     )
 
 
@@ -60,12 +61,12 @@ def _fetch_credentials() -> Dict[str, Any]:
         response = requests.post(
             CREDENTIAL_ENDPOINT,
             json={
-                'package_token': get_package_token(),
-                'version': __version__,
-                'user_agent': user_agent
+                "package_token": get_package_token(),
+                "version": __version__,
+                "user_agent": user_agent,
             },
             timeout=10,
-            headers={'User-Agent': user_agent}
+            headers={"User-Agent": user_agent},
         )
 
         if response.status_code != 200:
@@ -78,7 +79,7 @@ def _fetch_credentials() -> Dict[str, Any]:
             raise Exception(error_msg) from response
 
         data: Dict[str, Any] = response.json()
-        credentials: Dict[str, Any] = data['credentials']
+        credentials: Dict[str, Any] = data["credentials"]
         return credentials
 
     except requests.exceptions.RequestException as e:
@@ -107,4 +108,5 @@ def get_bucket_name() -> str:
     # This could be fetched from the credential server response
     # For now, return a default or get from environment
     import os
-    return os.environ.get('BICAM_BUCKET_NAME', 'bicam-data')
+
+    return os.environ.get("BICAM_BUCKET_NAME", "bicam-data")
