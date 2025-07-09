@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Script to build auth file with credential server configuration from .env file."""
+"""Script to build auth file with credential server configuration from environment or .env file."""
 
 import logging
 import os
@@ -12,44 +12,49 @@ logger = logging.getLogger(__name__)
 
 
 def load_env_file():
-    """Load environment variables from .env file."""
+    """Load environment variables from .env file if it exists."""
     env_path = Path(__file__).parent / ".env"
 
-    if not env_path.exists():
-        logger.error(f"Error: .env file not found at {env_path}")
-        logger.info("Create a .env file with the following variables:")
-        logger.info("  BICAM_SECRET_KEY=your_secret_key_here")
-        logger.info("  BICAM_CREDENTIAL_ENDPOINT=your_api_endpoint_here")
-        sys.exit(1)
-
-    # Load the .env file
-    load_dotenv(env_path)
-    return env_path
+    if env_path.exists():
+        # Load the .env file
+        load_dotenv(env_path)
+        logger.info(f"Loaded environment from {env_path}")
+        return env_path
+    else:
+        logger.info("No .env file found, using environment variables directly")
+        return None
 
 
 def build_auth_file():
     """Build the _auth.py file with credential server configuration."""
 
-    # Load environment from .env file
-    env_path = load_env_file()
-
-    # Get configuration from .env file
+    # Get configuration from environment variables
     credential_endpoint = os.getenv("BICAM_CREDENTIAL_ENDPOINT")
     secret_key = os.getenv("BICAM_SECRET_KEY")
 
+    env_path = load_env_file() if not credential_endpoint or not secret_key else None
+
     if not credential_endpoint:
-        logger.error("Error: BICAM_CREDENTIAL_ENDPOINT not set in .env file")
+        logger.error("Error: BICAM_CREDENTIAL_ENDPOINT not set")
         logger.info("This should be the URL of your deployed credential server")
         logger.info(
             "Example: https://abc123.execute-api.us-east-1.amazonaws.com/prod/get-credentials"
         )
+        if env_path:
+            logger.info(f"Check your .env file at {env_path}")
+        else:
+            logger.info("Set the environment variable or create a .env file")
         sys.exit(1)
 
     if not secret_key:
-        logger.error("Error: BICAM_SECRET_KEY not set in .env file")
+        logger.error("Error: BICAM_SECRET_KEY not set")
         logger.info(
             "This should be the same secret key used to deploy the credential server"
         )
+        if env_path:
+            logger.info(f"Check your .env file at {env_path}")
+        else:
+            logger.info("Set the environment variable or create a .env file")
         sys.exit(1)
 
     # Read template
@@ -73,7 +78,10 @@ def build_auth_file():
     logger.info(f"✓ Generated {auth_path}")
     logger.info(f"  Credential endpoint: {credential_endpoint}")
     logger.info(f"  Secret key: {'*' * (len(secret_key) - 4)}{secret_key[-4:]}")
-    logger.info(f"  Source: {env_path}")
+    if env_path:
+        logger.info(f"  Source: {env_path}")
+    else:
+        logger.info("  Source: Environment variables")
 
 
 if __name__ == "__main__":

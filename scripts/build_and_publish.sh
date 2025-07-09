@@ -6,38 +6,70 @@ set -e  # Exit on error
 echo "BICAM Build and Publish Script"
 echo "=============================="
 
-# Check for root .env file (for PyPI tokens)
-if [ ! -f ".env" ]; then
-    echo "Error: .env file not found in project root"
-    echo "Create .env file with PyPI tokens:"
-    echo "  PYPI_API_TOKEN=your-pypi-token-here"
-    exit 1
+# Function to check if environment variables are set
+check_env_vars() {
+    local missing_vars=()
+
+    if [ -z "$BICAM_CREDENTIAL_ENDPOINT" ]; then
+        missing_vars+=("BICAM_CREDENTIAL_ENDPOINT")
+    fi
+
+    if [ -z "$BICAM_SECRET_KEY" ]; then
+        missing_vars+=("BICAM_SECRET_KEY")
+    fi
+
+    if [ "$1" == "--publish" ] && [ -z "$PYPI_API_TOKEN" ]; then
+        missing_vars+=("PYPI_API_TOKEN")
+    fi
+
+    if [ "$1" == "--test-publish" ] && [ -z "$PYPI_API_TOKEN_TEST" ]; then
+        missing_vars+=("PYPI_API_TOKEN_TEST")
+    fi
+
+    if [ ${#missing_vars[@]} -gt 0 ]; then
+        echo "Missing required environment variables: ${missing_vars[*]}"
+        return 1
+    fi
+
+    return 0
+}
+
+# Try to load from root .env file if it exists (for CI compatibility)
+if [ -f ".env" ]; then
+    echo "Loading environment from root .env file..."
+    export $(grep -v '^#' .env | xargs)
 fi
 
-# Load environment from root .env file (for PyPI tokens)
-export $(grep -v '^#' .env | xargs)
-
-# Check for credential server .env file
+# Try to load from credential server .env file if it exists
 CREDENTIALS_ENV="scripts/credentials/.env"
-if [ ! -f "$CREDENTIALS_ENV" ]; then
-    echo "Error: Credential server .env file not found at $CREDENTIALS_ENV"
-    echo "Run ./scripts/credentials/setup_credential_server.sh to create and configure it"
-    exit 1
+if [ -f "$CREDENTIALS_ENV" ]; then
+    echo "Loading environment from $CREDENTIALS_ENV..."
+    export $(grep -v '^#' "$CREDENTIALS_ENV" | xargs)
 fi
 
-# Load credential server environment variables
-export $(grep -v '^#' "$CREDENTIALS_ENV" | xargs)
-
-# Check for required credential server environment variables
-if [ -z "$BICAM_CREDENTIAL_ENDPOINT" ] || [ -z "$BICAM_SECRET_KEY" ]; then
-    echo "Error: BICAM_CREDENTIAL_ENDPOINT and BICAM_SECRET_KEY must be set in $CREDENTIALS_ENV"
+# Check if we have the required environment variables
+if ! check_env_vars "$1"; then
     echo ""
-    echo "To deploy the credential server first:"
+    echo "Environment variables can be set in several ways:"
+    echo "1. Directly in the shell environment"
+    echo "2. In a root .env file"
+    echo "3. In scripts/credentials/.env file"
+    echo ""
+    echo "Required variables:"
+    echo "  BICAM_CREDENTIAL_ENDPOINT=your_api_endpoint_here"
+    echo "  BICAM_SECRET_KEY=your_secret_key_here"
+    if [ "$1" == "--publish" ]; then
+        echo "  PYPI_API_TOKEN=your_pypi_token_here"
+    elif [ "$1" == "--test-publish" ]; then
+        echo "  PYPI_API_TOKEN_TEST=your_test_pypi_token_here"
+    fi
+    echo ""
+    echo "For local development, you can run:"
     echo "  ./scripts/credentials/setup_credential_server.sh"
     exit 1
 fi
 
-# Generate credentials file
+# Generate credentials file if we have the required variables
 echo "Generating credentials file..."
 python scripts/credentials/3_build_credentials.py
 
@@ -117,7 +149,7 @@ else
     echo "  - To PyPI:     ./scripts/build_and_publish.sh --publish"
     echo "  - To TestPyPI: ./scripts/build_and_publish.sh --test-publish"
     echo ""
-    echo "Make sure to set the appropriate token in your .env file:"
+    echo "Make sure to set the appropriate token in your environment:"
     echo "  PYPI_API_TOKEN=pypi-... (for PyPI)"
     echo "  PYPI_API_TOKEN_TEST=pypi-... (for TestPyPI)"
 fi

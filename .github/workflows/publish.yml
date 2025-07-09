@@ -39,17 +39,5 @@ jobs:
         BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
         PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        # Create required .env files for build script
-        mkdir -p scripts/credentials
-        echo "BICAM_SECRET_KEY=${{ secrets.BICAM_SECRET_KEY }}" > scripts/credentials/.env
-        echo "BICAM_CREDENTIAL_ENDPOINT=${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}" >> scripts/credentials/.env
-
-        # Create root .env file for PyPI token
-        echo "PYPI_API_TOKEN=${{ secrets.PYPI_API_TOKEN }}" > .env
-
-        # Build and publish
+        # Build and publish using environment variables directly
         ./scripts/build_and_publish.sh --publish
-
-        # Clean up
-        rm -f .env
-        rm -f scripts/credentials/.env

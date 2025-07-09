@@ -88,23 +88,14 @@ jobs:
         uv pip install types-requests --system
 
     - name: Build package
+      env:
+        BICAM_SECRET_KEY: dummy_secret
+        BICAM_CREDENTIAL_ENDPOINT: https://dummy.execute-api.region.amazonaws.com/prod/get-credentials
+        PYPI_API_TOKEN: dummy_token
       run: |
-        # Create dummy credentials for build
-        export BICAM_SECRET_KEY=dummy_secret
-        export BICAM_CREDENTIAL_ENDPOINT=https://dummy.execute-api.region.amazonaws.com/prod/get-credentials
-
-        # Create required .env files for build script
-        mkdir -p scripts/credentials
-        echo "BICAM_SECRET_KEY=dummy_secret" > scripts/credentials/.env
-        echo "BICAM_CREDENTIAL_ENDPOINT=https://dummy.execute-api.region.amazonaws.com/prod/get-credentials" >> scripts/credentials/.env
-
-        # Create root .env file for PyPI token (dummy for build)
-        echo "PYPI_API_TOKEN=dummy_token" > .env
-
         python scripts/credentials/3_build_credentials.py
         uv build
         rm -f bicam/_auth.py
-        rm -f .env
       continue-on-error: true
 
     - name: Upload build artifacts
