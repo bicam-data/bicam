@@ -1,0 +1,39 @@
+# Include only the essential files for the package
+include README.md
+include LICENSE
+include pyproject.toml
+
+# Include the bicam package
+recursive-include bicam *.py
+recursive-include bicam py.typed
+
+# Exclude development and test files
+global-exclude tests/
+global-exclude scripts/
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude .pytest_cache
+global-exclude .coverage
+global-exclude htmlcov/
+global-exclude .mypy_cache
+global-exclude .ruff_cache
+global-exclude .venv/
+global-exclude build/
+global-exclude dist/
+global-exclude *.egg-info/
+global-exclude .env
+global-exclude .env.*
+global-exclude .git/
+global-exclude .gitignore
+global-exclude Makefile
+global-exclude requirements*.txt
+global-exclude uv.lock
+global-exclude .python-version
+global-exclude manifest.md
+global-exclude CHANGELOG.md
+global-exclude CONTRIBUTING.md
+global-exclude docs/
+global-exclude examples/
+global-exclude .github/ 
