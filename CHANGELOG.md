@@ -31,6 +31,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.1.3] - 2025-07-14
+
+### Added
+
+- N/A
+
+### Changed
+
+- Updated README for # of data types and warning for disk space.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
+
+### Fixed
+
+- N/A
+
+### Security
+
+- N/A
+
 ## [0.1.2] - 2025-07-09
 
 ### Added

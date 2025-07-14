@@ -8,7 +8,7 @@ The BICAM package provides easy programmatic access to the Bulk Ingestion of Con
 
 ## Features
 
-- 📦 **12 Dataset Types**: Access bills, amendments, members, committees, hearings, and more
+- 📦 **11 Dataset Types**: Access bills, amendments, members, committees, hearings, and more
 - 🚀 **Fast Downloads**: Optimized S3 downloads with progress tracking
 - 💾 **Smart Caching**: Automatic local caching to avoid re-downloads
 - 🔧 **Simple API**: Both Python API and command-line interface
@@ -113,6 +113,9 @@ bicam clear --all       # Clear all cached data
 
 ## Available Datasets
 
+**NOTE:** Ensure that you have extra disk space in order to properly unzip these datasets, as they are stored as .zip files and
+automatically unzip into the cache directory. This may require space up to around 30 GB for larger datatypes, such as amendments.
+
 | Dataset | Size | Description |
 |---------|------|-------------|
 | **bills** | ~1.8GB | Complete bills data including text, summaries, and related records |
@@ -195,11 +198,13 @@ bicam.clear_cache()
 ## Best Practices
 
 ### Dataset Selection
+
 - Start with smaller datasets like `congresses` or `members`
 - Use `bills` for legislative analysis
 - Download `complete` only if you need all data
 
 ### Performance Tips
+
 - Use `--quiet` for automated scripts
 - Use `--confirm` to skip prompts in batch operations
 - Monitor disk space before downloading large datasets
@@ -207,11 +212,13 @@ bicam.clear_cache()
 - Use `df_engine='dask'` for out-of-memory processing
 
 ### Data Management
+
 - Use `bicam cache` to monitor storage usage
 - Clear unused datasets with `bicam clear`
 - Consider using custom cache directories for different projects
 
 ### Error Handling
+
 ```python
 import bicam
 

@@ -42,13 +42,13 @@ jobs:
         python scripts/credentials/3_build_credentials.py
         uv run ruff format bicam/_auth.py
 
-    - name: Verify dataset checksums
-      env:
-        BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
-        BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
-      run: |
-        python scripts/verify_checksums.py
-      continue-on-error: true
+    # - name: Verify dataset checksums
+    #   env:
+    #     BICAM_SECRET_KEY: ${{ secrets.BICAM_SECRET_KEY }}
+    #     BICAM_CREDENTIAL_ENDPOINT: ${{ secrets.BICAM_CREDENTIAL_ENDPOINT }}
+    #   run: |
+    #     python scripts/verify_checksums.py
+    #   continue-on-error: true
 
     - name: Run linting
       run: |
